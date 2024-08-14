@@ -3,6 +3,7 @@ package vision.vision;
 //@formater:on
 public class App
 {
+	// perceptron neuron
 	static double neuron(double[] x, double[] w, double b) {
     	double z = 0.0;
     	
@@ -36,13 +37,23 @@ public class App
 		return neuron(new double[] {x1, x2}, new double[] {-1, -1}, 2);
 	}
 	
+	// XOR gate
+	static double xor(double x1, double x2) {
+		return and(or(x1, x2), nand(x1, x2));
+	}
+	
+	// XNOR gate
+	static double xnor(double x1, double x2) {
+		return or(and(x1, x2), nor(x1, x2));
+	}
+	
     public static void main( String[] args )
     {
     	for(int i = 0; i < 4; i++) {
     		double x1 = i / 2;
     		double x2 = i % 2;
     		
-    		double output = nand(x1, x2);
+    		double output = xnor(x1, x2);
     		
     		System.out.printf("%d%d\t%d\n", (int)x1, (int)x2, (int)output);
     	}
