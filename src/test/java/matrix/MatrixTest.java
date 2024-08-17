@@ -9,6 +9,14 @@ import vision.matrix.Matrix;
 public class MatrixTest {
 	
 	@Test
+	public void testMultiply() {
+		Matrix m1 = new Matrix(2, 3, i -> i);
+		Matrix m2 = new Matrix(3, 2, i -> i);
+		
+		Matrix result = m1.multiply(m2);
+	}
+	
+	@Test
 	public void testEquals() {
 		Matrix m1 = new Matrix(3, 4, i -> 0.5 * (i - 6));
 		Matrix m2 = new Matrix(3, 4, i -> 0.5 * (i - 6));
@@ -19,16 +27,27 @@ public class MatrixTest {
 	}
 	
 	@Test
+	public void testAddMatrices() {
+		Matrix m1 = new Matrix(2, 2, i -> i);
+		Matrix m2 = new Matrix(2, 2, i -> i * 1.5);
+		Matrix expected = new Matrix(2, 2, i -> i * 2.5);
+		
+		Matrix result = m1.apply((index, value) -> value + m2.get(index));
+		
+		assertTrue(result.equals(expected));
+	}
+	
+	@Test
 	public void testMultiplyDouble() {
 		Matrix m = new Matrix(3, 4, i -> 0.5 * (i - 6));
 		
 		double x = 0.5;
 		
+		Matrix expected = new Matrix(3, 4, i -> x * 0.5 * (i - 6));
 		Matrix result = m.apply((index, value)->x * value);
 		
-		System.out.println(m);
-		
-		System.out.println(result);
+		assertTrue(result.equals(expected));
+		assertTrue(Math.abs(result.get(1) + 1.25000) < 0.0001);
 	}
 	
 	@Test
