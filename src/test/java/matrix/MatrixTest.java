@@ -2,11 +2,32 @@ package matrix;
 
 import static org.junit.Assert.*;
 
+import java.util.Random;
+
 import org.junit.Test;
 
 import vision.matrix.Matrix;
 
 public class MatrixTest {
+	private Random random = new Random();
+	
+	@Test
+	public void testSoftmax() {
+		Matrix m = new Matrix(5, 8, i -> random.nextGaussian());
+		Matrix result = m.softMax();
+		
+		double[] colSums = new double[8];
+		
+		result.forEach((row, col, value) -> {
+			assertTrue(value >= 0 && value <= 1.0);
+			
+			colSums[col] += value;
+		});
+		
+		for(var sum : colSums) {
+			assertTrue(Math.abs(sum - 1.0) < 0.00001);
+		}
+	}
 	
 	@Test
 	public void testSumColumns() {

@@ -27,6 +27,10 @@ public class Matrix {
 		void consume(int index, double value);
 	}
 	
+	public interface RowColValueConsumer {
+		void consume(int row, int col, double value);
+	}
+	
 	public interface RowColProducer {
 		double produce(int row, int col, double value);
 	}
@@ -85,6 +89,15 @@ public class Matrix {
 		}
 	}
 	
+	public void forEach(RowColValueConsumer consumer) {
+		int index = 0;
+		for (int row = 0; row < rows; row++) {
+			for(int col = 0; col < cols; col++) {
+				consumer.consume(row, col, a[index++]);
+			}
+		}
+	}
+	
 	public Matrix multiply(Matrix m) {
 		Matrix result = new Matrix(rows, m.cols);
 		
@@ -113,6 +126,18 @@ public class Matrix {
 				result.a[col] += a[index++];
 			}
 		}
+		
+		return result;
+	}
+	
+	public Matrix softMax() {
+		Matrix result = new Matrix(rows, cols, i -> Math.exp(a[i]));
+		
+		Matrix colSum = result.sumColumns();
+		
+		result.modify((row, col, value) -> {
+			return value / colSum.get(col);
+		});
 		
 		return result;
 	}
