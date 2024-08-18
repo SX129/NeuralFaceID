@@ -49,6 +49,17 @@ public class Matrix {
 		Matrix result = new Matrix(rows, m.cols);
 		
 		assert cols == m.rows: "Cannot multiply matrices; incompatible dimensions";
+		
+		for (int row = 0; row < result.rows; row++) {
+			for (int col = 0; col < result.cols; col++) {
+				
+				for(int n = 0; n < cols; n++) {
+					result.a[row * result.cols + col] += a[row * cols + n] * m.a[col + n * m.cols];
+				}
+				
+			}
+		}
+		
 		return result;
 	}
 	
