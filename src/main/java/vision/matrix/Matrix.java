@@ -181,6 +181,14 @@ public class Matrix {
 		
 		return true;
 	}
+	
+	public String toString(boolean showValues) {
+		if(showValues) {
+			return toString();
+		}else {
+			return rows + "x" + cols;
+		}
+	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

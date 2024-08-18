@@ -12,6 +12,20 @@ public class VisionTest {
 	private Random random = new Random();
 	
 	@Test
+	public void testEngine() {
+		Engine engine = new Engine();
+		
+		engine.add(Transform.DENSE, 8, 5);
+		engine.add(Transform.RELU);
+		engine.add(Transform.DENSE, 5);
+		engine.add(Transform.RELU);
+		engine.add(Transform.DENSE, 4);
+		engine.add(Transform.SOFTMAX);
+		
+		System.out.println(engine);
+	}
+	
+	//@Test
 	public void testTemp() {
 		int inputSize = 5;
 		int layer1Size = 6;
