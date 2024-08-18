@@ -22,7 +22,11 @@ public class VisionTest {
 		engine.add(Transform.DENSE, 4);
 		engine.add(Transform.SOFTMAX);
 		
+		Matrix input = new Matrix(5, 1, i -> random.nextGaussian());
+		Matrix output = engine.runForwards(input);
+		
 		System.out.println(engine);
+		System.out.println(output);
 	}
 	
 	//@Test

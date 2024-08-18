@@ -10,6 +10,30 @@ public class Engine {
 	private LinkedList<Matrix> weights = new LinkedList<>();
 	private LinkedList<Matrix> biases = new LinkedList<>();
 	
+	Matrix runForwards(Matrix input) {
+		Matrix output = input;
+
+		int denseIndex = 0;
+
+		for (var t : transforms) {
+			switch (t) {
+				case DENSE:
+					Matrix weight = weights.get(denseIndex);
+					Matrix bias = biases.get(denseIndex);
+					
+					output = weight.multiply(output).modify((row, col, value) -> value + bias.get(row));
+	
+					denseIndex++;
+				case RELU:
+					output = output.modify(value -> value > 0 ? value : 0);
+				case SOFTMAX:
+					output = output.softMax();
+			}
+		}
+
+		return output;
+	}
+	
 	public void add(Transform transform, double... params) {
 		Random random = new Random();
 		
