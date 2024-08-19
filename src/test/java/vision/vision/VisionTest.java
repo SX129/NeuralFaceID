@@ -12,6 +12,28 @@ public class VisionTest {
 	private Random random = new Random();
 	
 	@Test
+	public void testApproximator() {
+		final int rows = 4;
+		final int cols = 5;
+		
+		Matrix input = new Matrix(rows, cols, i -> random.nextGaussian());
+		Matrix expected = new Matrix(rows, cols, i -> 0);
+		
+		for(int col = 0; col < cols; col++) {
+			int randomRow = random.nextInt(rows);
+			
+			expected.set(randomRow, col, 1);
+		}
+		
+		Approximator.gradient(input, null);
+		
+		System.out.println();
+		System.out.println(input);
+		
+		System.out.println(expected);
+	}
+	
+	@Test
 	public void testCrossEntropy() {
 		double[] expectedValues = {1, 0, 0, 0, 0, 1, 0, 1, 0};
 		Matrix expected = new Matrix(3, 3, i -> expectedValues[i]);
