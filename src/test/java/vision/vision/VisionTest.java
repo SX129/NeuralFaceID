@@ -16,7 +16,7 @@ public class VisionTest {
 		final int rows = 4;
 		final int cols = 5;
 		
-		Matrix input = new Matrix(rows, cols, i -> random.nextGaussian());
+		Matrix input = new Matrix(rows, cols, i -> random.nextGaussian()).softMax();
 		Matrix expected = new Matrix(rows, cols, i -> 0);
 		
 		for(int col = 0; col < cols; col++) {
@@ -25,11 +25,10 @@ public class VisionTest {
 			expected.set(randomRow, col, 1);
 		}
 		
-		Approximator.gradient(input, null);
-		
-		System.out.println();
-		System.out.println(input);
-		
+		Approximator.gradient(input, in -> {
+			return LossFunction.crossEntropy(expected, in);
+		});
+
 		System.out.println(expected);
 	}
 	
