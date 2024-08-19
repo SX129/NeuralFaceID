@@ -25,11 +25,20 @@ public class VisionTest {
 			expected.set(randomRow, col, 1);
 		}
 		
-		Approximator.gradient(input, in -> {
+		Matrix result = Approximator.gradient(input, in -> {
 			return LossFunction.crossEntropy(expected, in);
 		});
-
-		System.out.println(expected);
+		
+		input.forEach((index, value) -> {
+			double resultValue = result.get(index);
+			double expectedValue = expected.get(index);
+			
+			if(expectedValue < 0.001) {
+                assertTrue(Math.abs(resultValue) < 0.01);
+            } else {
+            	assertTrue(Math.abs(resultValue + 1.0/value) < 0.01);
+            }
+		});
 	}
 	
 	@Test
