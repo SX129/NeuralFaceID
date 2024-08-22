@@ -12,6 +12,35 @@ public class VisionTest {
 	private Random random = new Random();
 	
 	@Test
+	public void testSoftMaxCrossEntropyGradient() {
+		final int rows = 4;
+		final int cols = 5;
+		
+		Matrix input = new Matrix(rows, cols, i -> random.nextGaussian());
+		Matrix expected = new Matrix(rows, cols, i -> 0);
+		
+		for(int col = 0; col < cols; col++) {
+			int randomRow = random.nextInt(rows);
+			
+			expected.set(randomRow, col, 1);
+		}
+		
+		Matrix softmaxOutput = input.softMax();
+		
+		Matrix result = Approximator.gradient(input, in -> {
+			return LossFunction.crossEntropy(expected, in.softMax());
+		});
+		
+		result.forEach((index, value) -> {
+			double softmaxValue = softmaxOutput.get(index);
+			double expectedValue = expected.get(index);
+			
+			assertTrue(Math.abs(value - (softmaxValue - expectedValue)) < 0.001);
+		});
+		
+	}
+	
+	@Test
 	public void testApproximator() {
 		final int rows = 4;
 		final int cols = 5;
