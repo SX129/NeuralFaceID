@@ -133,7 +133,7 @@ public class VisionTest {
 		});
 	}
 	
-	//@Test
+	@Test
 	public void testEngine() {
 		Engine engine = new Engine();
 		
@@ -146,9 +146,7 @@ public class VisionTest {
 		
 		Matrix input = new Matrix(5, 1, i -> random.nextGaussian());
 		Matrix output = engine.runForwards(input);
-		
-		System.out.println(engine);
-		System.out.println(output);
+		engine.runBackwards(null);
 	}
 	
 	//@Test
