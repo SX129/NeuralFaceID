@@ -12,6 +12,32 @@ public class VisionTest {
 	private Random random = new Random();
 	
 	@Test
+	public void testBackpropWeights() {
+		final int inputRows = 4;
+		final int cols = 5;
+		final int outputRows = 4;
+		
+		Matrix input = new Matrix(inputRows, cols, i -> random.nextGaussian());
+		Matrix expected = new Matrix(outputRows, cols, i -> 0);
+		
+		for(int col = 0; col < cols; col++) {
+			int randomRow = random.nextInt(outputRows);
+			
+			expected.set(randomRow, col, 1);
+		}
+		
+		Matrix softmaxOutput = input.softMax();
+		
+		Matrix approximatedResult = Approximator.gradient(input, in -> {
+			return LossFunction.crossEntropy(expected, in.softMax());
+		});
+		
+		Matrix calculatedResult = softmaxOutput.apply((index, value) -> value - expected.get(index));
+		
+		assertTrue(approximatedResult.equals(calculatedResult));
+	}
+	
+	@Test
 	public void testSoftMaxCrossEntropyGradient() {
 		final int rows = 4;
 		final int cols = 5;
