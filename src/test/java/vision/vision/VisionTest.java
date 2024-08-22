@@ -13,12 +13,19 @@ public class VisionTest {
 	
 	@Test
 	public void testBackpropWeights() {
+		
+		interface NeuralNetwork {
+			Matrix apply(Matrix m);
+		}
+		
 		final int inputRows = 4;
 		final int cols = 5;
 		final int outputRows = 4;
 		
 		Matrix input = new Matrix(inputRows, cols, i -> random.nextGaussian());
 		Matrix expected = new Matrix(outputRows, cols, i -> 0);
+		Matrix weights = new Matrix(outputRows, inputRows, i -> random.nextGaussian());
+		Matrix biases = new Matrix(outputRows, 1, i -> random.nextGaussian());
 		
 		for(int col = 0; col < cols; col++) {
 			int randomRow = random.nextInt(outputRows);
@@ -26,13 +33,17 @@ public class VisionTest {
 			expected.set(randomRow, col, 1);
 		}
 		
-		Matrix softmaxOutput = input.softMax();
+		NeuralNetwork neuralNetwork = m -> weights.multiply(m).modify((row, col, value) -> value + biases.get(row)).softMax();
+				
+		Matrix softmaxOutput = neuralNetwork.apply(input);
 		
 		Matrix approximatedResult = Approximator.gradient(input, in -> {
-			return LossFunction.crossEntropy(expected, in.softMax());
+			Matrix out = neuralNetwork.apply(in);
+			return LossFunction.crossEntropy(expected, out);
 		});
 		
 		Matrix calculatedResult = softmaxOutput.apply((index, value) -> value - expected.get(index));
+		calculatedResult = weights.transpose().multiply(calculatedResult);
 		
 		assertTrue(approximatedResult.equals(calculatedResult));
 	}

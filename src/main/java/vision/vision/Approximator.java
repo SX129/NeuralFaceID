@@ -7,7 +7,7 @@ import vision.matrix.Matrix;
 public class Approximator {
 	
 	public static Matrix gradient(Matrix input, Function<Matrix, Matrix> transform) {
-		final double INC = 0.000001;
+		final double INC = 0.00000001;
 		
 		Matrix loss1 = transform.apply(input);
 		
