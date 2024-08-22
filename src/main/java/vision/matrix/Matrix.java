@@ -6,7 +6,7 @@ import java.util.Objects;
 public class Matrix {
 	
 	private static final String NUMBER_FORMAT = "%+12.5f";
-	private static final double TOLERANCE = 0.000001;
+	private double tolerance = 0.000001;
 	
 	private int rows;
 	private int cols;
@@ -103,6 +103,7 @@ public class Matrix {
 	
 	public void forEach(RowColIndexValueConsumer consumer) {
 		int index = 0;
+		
 		for (int row = 0; row < rows; row++) {
 			for(int col = 0; col < cols; col++) {
 				consumer.consume(row, col, index, a[index++]);
@@ -112,6 +113,7 @@ public class Matrix {
 	
 	public void forEach(RowColValueConsumer consumer) {
 		int index = 0;
+		
 		for (int row = 0; row < rows; row++) {
 			for(int col = 0; col < cols; col++) {
 				consumer.consume(row, col, a[index++]);
@@ -166,7 +168,6 @@ public class Matrix {
 	
 	public Matrix softMax() {
 		Matrix result = new Matrix(rows, cols, i -> Math.exp(a[i]));
-		
 		Matrix colSum = result.sumColumns();
 		
 		result.modify((row, col, value) -> {
@@ -199,10 +200,15 @@ public class Matrix {
 		return result;
 	}
 	
+	public void setTolerance(double tolerance) {
+		this.tolerance = tolerance;
+	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
+		
 		result = prime * result + Arrays.hashCode(a);
 		result = prime * result + Objects.hash(cols, rows);
 		return result;
@@ -216,10 +222,11 @@ public class Matrix {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
+		
 		Matrix other = (Matrix) obj;
 		
 		for (int i = 0; i < a.length; i++) {
-			if (Math.abs(a[i] - other.a[i]) > TOLERANCE) {
+			if (Math.abs(a[i] - other.a[i]) > tolerance) {
 				return false;
 			}
 		}

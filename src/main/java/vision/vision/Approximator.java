@@ -24,6 +24,7 @@ public class Approximator {
 			
 			result.set(row, col, rate);
 		});
+		
 		return result;
 	}
 }

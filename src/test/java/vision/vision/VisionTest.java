@@ -26,11 +26,24 @@ public class VisionTest {
 		engine.add(Transform.DENSE, 4);
 		engine.add(Transform.SOFTMAX);
 		
+		engine.setStoreInputError(true);
+		
 		Matrix input = Util.generateInputMatrix(inputRows, cols);
 		Matrix expected = Util.generateExpectedMatrix(outputRows, cols);
 		
+		Matrix approximatedError = Approximator.gradient(input, in -> {
+			BatchResult batchResult = engine.runForwards(in);
+			return LossFunctions.crossEntropy(expected, batchResult.getIo().getLast());
+		});
+		
 		BatchResult batchResult = engine.runForwards(input);
 		engine.runBackwards(batchResult, expected);
+		
+		Matrix calculatedError = batchResult.getInputError();
+		
+		calculatedError.setTolerance(0.001);
+		
+		assertTrue(approximatedError.equals(calculatedError));
 	}
 	
 	@Test
