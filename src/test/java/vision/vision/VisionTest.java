@@ -12,7 +12,7 @@ public class VisionTest {
 	private Random random = new Random();
 	
 	@Test
-	public void testBackpropWeights() {
+	public void testBackprop() {
 		
 		interface NeuralNetwork {
 			Matrix apply(Matrix m);
@@ -33,7 +33,13 @@ public class VisionTest {
 			expected.set(randomRow, col, 1);
 		}
 		
-		NeuralNetwork neuralNetwork = m -> weights.multiply(m).modify((row, col, value) -> value + biases.get(row)).softMax();
+		NeuralNetwork neuralNetwork = m -> {
+			Matrix out = m.apply((index, value) -> value > 0 ? value : 0); // ReLu
+			out = weights.multiply(out); // Weights
+			out.modify((row, col, value) -> value + biases.get(row)); // Biases
+			out = out.softMax(); // Activation Function
+			return out;
+		};
 				
 		Matrix softmaxOutput = neuralNetwork.apply(input);
 		
@@ -44,6 +50,7 @@ public class VisionTest {
 		
 		Matrix calculatedResult = softmaxOutput.apply((index, value) -> value - expected.get(index));
 		calculatedResult = weights.transpose().multiply(calculatedResult);
+		calculatedResult = calculatedResult.apply((index, value) -> input.get(index) > 0 ? value : 0);
 		
 		assertTrue(approximatedResult.equals(calculatedResult));
 	}
