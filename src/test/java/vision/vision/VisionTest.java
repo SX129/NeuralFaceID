@@ -10,38 +10,33 @@ import vision.matrix.Matrix;
 
 public class VisionTest {
 	private Random random = new Random();
-	
+
 	@Test
 	public void testTrainEngine() {
-		int inputRows = 5;
-		int cols = 6;
-		int outputRows = 7;
-		
-		Matrix input = Util.generateInputMatrix(inputRows, cols);
-		Matrix expected = Util.generateTrainableExpectedMatrix(outputRows, input);
-		
+		int inputRows = 500;
+		int cols = 32;
+		int outputRows = 3;
+
 		Engine engine = new Engine();
 		engine.add(Transform.DENSE, 6, inputRows);
 		engine.add(Transform.RELU);
 		engine.add(Transform.DENSE, outputRows);
 		engine.add(Transform.SOFTMAX);
-		
-		BatchResult batchResult = engine.runForwards(input);
-		engine.evaluate(batchResult, expected);
-		
-		double loss1 = batchResult.getLoss();
-		
-		engine.runBackwards(batchResult, expected);
-		engine.adjust(batchResult, 0.01);
-		batchResult = engine.runForwards(input);
-		engine.evaluate(batchResult, expected);
-		
-		double loss2 = batchResult.getLoss();
-		double percentCorrect = batchResult.getPercentCorrect();
-		
-		System.out.println("Loss 1: " + loss1);
-		System.out.println("Loss 2: " + loss2);
-		System.out.println("Percent Correct: " + percentCorrect);
+
+		for (int i = 0; i < 20; i++) {
+			Matrix input = Util.generateInputMatrix(inputRows, cols);
+			Matrix expected = Util.generateTrainableExpectedMatrix(outputRows, input);
+			
+			BatchResult batchResult = engine.runForwards(input);
+			engine.runBackwards(batchResult, expected);
+			engine.adjust(batchResult, 0.01);
+			engine.evaluate(batchResult, expected);
+
+			double loss = batchResult.getLoss();
+			double percentCorrect = batchResult.getPercentCorrect();
+
+			System.out.printf("Loss: %.3f, %% correct: %.2f\n", loss, percentCorrect);
+		}
 	}
 
 	@Test
@@ -62,7 +57,7 @@ public class VisionTest {
 			Matrix out = w.multiply(input).softMax();
 			return LossFunctions.crossEntropy(expected, out);
 		});
-		
+
 		calculatedWeightGradients.setTolerance(0.01);
 		assertTrue(approximatedWeightGradients.equals(calculatedWeightGradients));
 
