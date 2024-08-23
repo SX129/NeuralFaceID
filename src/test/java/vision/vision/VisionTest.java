@@ -10,6 +10,37 @@ import vision.matrix.Matrix;
 
 public class VisionTest {
 	private Random random = new Random();
+	
+	@Test
+	public void testTrainEngine() {
+		int inputRows = 5;
+		int cols = 6;
+		int outputRows = 7;
+		
+		Matrix input = Util.generateInputMatrix(inputRows, cols);
+		Matrix expected = Util.generateTrainableExpectedMatrix(outputRows, input);
+		
+		Engine engine = new Engine();
+		engine.add(Transform.DENSE, 6, inputRows);
+		engine.add(Transform.RELU);
+		engine.add(Transform.DENSE, outputRows);
+		engine.add(Transform.SOFTMAX);
+		
+		BatchResult batchResult = engine.runForwards(input);
+		engine.evaluate(batchResult, expected);
+		
+		double loss1 = batchResult.getLoss();
+		
+		engine.runBackwards(batchResult, expected);
+		engine.adjust(batchResult, 0.01);
+		batchResult = engine.runForwards(input);
+		engine.evaluate(batchResult, expected);
+		
+		double loss2 = batchResult.getLoss();
+		
+		System.out.println("Loss 1: " + loss1);
+		System.out.println("Loss 2: " + loss2);
+	}
 
 	@Test
 	public void testWeightGradient() {
