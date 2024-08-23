@@ -14,6 +14,15 @@ public class Engine {
 	private boolean storeInputError = false;
 	private double scaleInitialWeights = 1;
 	
+	public void evaluate(BatchResult batchResult, Matrix expected) {
+		if(lossFunction != LossFunction.CROSSENTROPY) {
+			throw new UnsupportedOperationException("Loss function must be cross entropy");
+		}
+		
+		double loss = LossFunctions.crossEntropy(expected, batchResult.getOutput()).averageColumn().get(0);
+		batchResult.setLoss(loss);
+	}
+	
 	BatchResult runForwards(Matrix input) {
 		BatchResult batchResult = new BatchResult();
 		Matrix output = input;
