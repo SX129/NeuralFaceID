@@ -23,9 +23,10 @@ public class VisionTest {
 		engine.add(Transform.DENSE, outputRows);
 		engine.add(Transform.SOFTMAX);
 
-		for (int i = 0; i < 20; i++) {
-			Matrix input = Util.generateInputMatrix(inputRows, cols);
-			Matrix expected = Util.generateTrainableExpectedMatrix(outputRows, input);
+		for (int i = 0; i < 2000; i++) {
+			var tm = Util.generateTrainingMatrixes(inputRows, outputRows, cols);
+			var input = tm.getInput();
+			var expected = tm.getOutput();
 			
 			BatchResult batchResult = engine.runForwards(input);
 			engine.runBackwards(batchResult, expected);
