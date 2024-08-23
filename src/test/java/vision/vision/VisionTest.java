@@ -37,9 +37,11 @@ public class VisionTest {
 		engine.evaluate(batchResult, expected);
 		
 		double loss2 = batchResult.getLoss();
+		double percentCorrect = batchResult.getPercentCorrect();
 		
 		System.out.println("Loss 1: " + loss1);
 		System.out.println("Loss 2: " + loss2);
+		System.out.println("Percent Correct: " + percentCorrect);
 	}
 
 	@Test
