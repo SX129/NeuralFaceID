@@ -74,21 +74,35 @@ public class NeuralNetwork {
 		var numberBatches = batches.size();
 		int index = 0;
 		
+		double averageLoss = 0;
+		double averagePercentCorrect = 0;
+		
 		for(var batch : batches) {
 			try {
-				var batchedResult = batch.get();
+				var batchResult = batch.get();
+				
+				if (!trainingMode) {
+					averageLoss += batchResult.getLoss();
+					averagePercentCorrect += batchResult.getPercentCorrect();
+				}
+				
 			} catch (Exception e) {
 				throw new RuntimeException("Execution exception", e);
 			}
 			
 			int printDot = numberBatches / 30;
 			
-			if(trainingMode && (index % printDot == 0)) {
+			if(trainingMode && (index++ % printDot == 0)) {
                 System.out.print(".");
             }
 		}
 		
-		
+		if(!trainingMode) {
+			averageLoss /= batches.size();
+			averagePercentCorrect /= batches.size();
+			
+			System.out.printf("Loss: %.3f -- Percent Correct: %.2f", averageLoss, averagePercentCorrect);
+        }
 	}
 
 	private LinkedList<Future<BatchResult>> createBatchTasks(Loader loader, boolean trainingMode) {
