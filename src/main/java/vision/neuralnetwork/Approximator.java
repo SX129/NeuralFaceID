@@ -1,4 +1,4 @@
-package vision.vision;
+package vision.neuralnetwork;
 
 import java.util.function.Function;
 

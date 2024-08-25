@@ -1,4 +1,4 @@
-package vision.vision;
+package vision.neuralnetwork;
 
 //@formater:on
 public class App

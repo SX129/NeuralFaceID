@@ -1,4 +1,4 @@
-package vision.vision;
+package vision.neuralnetwork;
 
 public enum LossFunction {
 	CROSSENTROPY, MEANSQUARES,

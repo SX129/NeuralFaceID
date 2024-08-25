@@ -1,4 +1,4 @@
-package vision.vision;
+package vision.neuralnetwork;
 
 import static org.junit.Assert.*;
 
@@ -7,8 +7,15 @@ import java.util.Random;
 import org.junit.Test;
 
 import vision.matrix.Matrix;
+import vision.neuralnetwork.Approximator;
+import vision.neuralnetwork.BatchResult;
+import vision.neuralnetwork.Engine;
+import vision.neuralnetwork.LossFunctions;
+import vision.neuralnetwork.RunningAverages;
+import vision.neuralnetwork.Transform;
+import vision.neuralnetwork.Util;
 
-public class VisionTest {
+public class NeuralNetTest {
 	private Random random = new Random();
 
 	@Test
