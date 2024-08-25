@@ -1,7 +1,9 @@
 package vision.neuralnetwork;
 
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.LinkedList;
@@ -180,6 +182,18 @@ public class NeuralNetwork implements Serializable{
 		}
 
 		return true;
+	}
+	
+	public static NeuralNetwork load(String file) {
+		NeuralNetwork neuralNetwork = null;
+		
+		try (var ds = new ObjectInputStream(new FileInputStream(file))) {
+			neuralNetwork = (NeuralNetwork)ds.readObject();
+		}catch(Exception e) {
+			System.err.println("Error loading file: " + file);
+		}
+
+		return neuralNetwork;
 	}
 
 }
