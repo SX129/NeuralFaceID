@@ -157,6 +157,16 @@ public class Matrix {
 		return result;
 	}
 	
+	public double sum() {
+		double sum = 0;
+		
+		for (var v : a) {
+			sum += v;
+		}
+		
+		return sum;
+	}
+	
 	public Matrix getGreatestRowNumbers() {
 		Matrix result = new Matrix(1, cols);
 		
