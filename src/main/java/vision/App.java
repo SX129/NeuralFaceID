@@ -26,10 +26,10 @@ public class App {
 			neuralNetwork.add(Transform.SOFTMAX);
 			
 			neuralNetwork.setThreads(5);
-			neuralNetwork.setEpochs(1);
+			neuralNetwork.setEpochs(100);
 			neuralNetwork.setLearningRate(0.02, 0.001);
 		}else {
-			System.out.println("Neural network loaded from saved file: " + filename);
+			System.out.println("Neural network loaded from saved file: " + filename + "\n");
 		}
 		
 		System.out.println(neuralNetwork);
@@ -38,6 +38,10 @@ public class App {
 		Loader testLoader = new TestLoader(10_000, 32);
 		
 		neuralNetwork.fit(trainLoader, testLoader);
-		neuralNetwork.save(filename);
+		if(neuralNetwork.save(filename)) {
+			System.out.println("Neural network saved to file: " + filename);
+		}else {
+			System.out.println("Unable to save neural network to: " + filename);
+		}
 	}
 }
