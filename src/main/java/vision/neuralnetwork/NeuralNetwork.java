@@ -1,5 +1,9 @@
 package vision.neuralnetwork;
 
+import java.util.LinkedList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+
 import vision.matrix.Matrix;
 import vision.neuralnetwork.loader.BatchData;
 import vision.neuralnetwork.loader.Loader;
@@ -15,8 +19,14 @@ public class NeuralNetwork {
 	
 	private Object lock = new Object();
 
+	private int threads;
+
 	public NeuralNetwork() {
 		engine = new Engine();
+	}
+	
+	public void setThreads(int threads) {
+		this.threads = threads;
 	}
 
 	public void add(Transform transform, double... params) {
@@ -61,24 +71,26 @@ public class NeuralNetwork {
 
 	}
 
-	private Object createBatchTasks(Loader loader, boolean trainingMode) {
+	private LinkedList<Future<BatchResult>> createBatchTasks(Loader loader, boolean trainingMode) {
+		LinkedList<Future<BatchResult>> batches = new LinkedList<>();
+		
 		MetaData metaData = loader.getMetaData();
 		int numberBatches = metaData.getNumberBatches();
+		
+		var executor = Executors.newFixedThreadPool(threads);
 
 		for (int i = 0; i < numberBatches; i++) {
-			runBatch(loader, trainingMode);
+			batches.add(executor.submit(() -> runBatch(loader, trainingMode)));
 		}
+		
+		executor.shutdown();
 
-		return null;
+		return batches;
 	}
 
 	private BatchResult runBatch(Loader loader, boolean trainingMode) {
 		MetaData metaData = loader.open();
-
-		int numberItems = metaData.getNumberItems();
-
 		BatchData batchData = loader.readBatch();
-
 
 		int itemsRead = metaData.getItemsRead();
 		int inputSize = metaData.getInputSize();
