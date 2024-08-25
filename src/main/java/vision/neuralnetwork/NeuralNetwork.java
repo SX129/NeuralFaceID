@@ -23,7 +23,7 @@ public class NeuralNetwork implements Serializable{
 	private int epochs = 20;
 	private double initialLearningRate = 0.01;
 	private double finalLearningRate = 0.001;
-	private int threads = 2;
+	private int threads = 32;
 
 	transient private double learningRate;
 	transient private Object lock = new Object();
@@ -51,6 +51,13 @@ public class NeuralNetwork implements Serializable{
 
 	public void setEpochs(int epochs) {
 		this.epochs = epochs;
+	}
+	
+	public double[] predict(double[] inputData) {
+		Matrix input = new Matrix(inputData.length, 1, (index) -> inputData[index]);
+		BatchResult batchResult = engine.runForwards(input);
+		
+		return batchResult.getOutput().get();
 	}
 
 	public void fit(Loader trainLoader, Loader evalLoader) {
