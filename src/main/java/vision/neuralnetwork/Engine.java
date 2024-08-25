@@ -14,6 +14,10 @@ public class Engine {
 	private boolean storeInputError = false;
 	private double scaleInitialWeights = 1;
 	
+	public void setScaleInitialWeights(double scale) {
+		this.scaleInitialWeights = scale;
+	}
+	
 	public void evaluate(BatchResult batchResult, Matrix expected) {
 		if(lossFunction != LossFunction.CROSSENTROPY) {
 			throw new UnsupportedOperationException("Loss function must be cross entropy");
