@@ -1,6 +1,7 @@
 package vision.neuralnetwork;
 
 import java.util.LinkedList;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -19,7 +20,7 @@ public class NeuralNetwork {
 	
 	private Object lock = new Object();
 
-	private int threads;
+	private int threads = 2;
 
 	public NeuralNetwork() {
 		engine = new Engine();
@@ -52,7 +53,9 @@ public class NeuralNetwork {
 			if (evalLoader != null) {
 				runEpoch(evalLoader, false);
 			}
-
+			
+			System.out.println();
+			
 			learningRate -= (initialLearningRate - finalLearningRate) / epochs;
 		}
 	}
@@ -66,9 +69,26 @@ public class NeuralNetwork {
 		loader.close();
 	}
 
-	private void consumeBatchTasks(Object queue, boolean trainingMode) {
-		// TODO Auto-generated method stub
-
+	private void consumeBatchTasks(LinkedList<Future<BatchResult>> batches, boolean trainingMode) {
+		
+		var numberBatches = batches.size();
+		int index = 0;
+		
+		for(var batch : batches) {
+			try {
+				var batchedResult = batch.get();
+			} catch (Exception e) {
+				throw new RuntimeException("Execution exception", e);
+			}
+			
+			int printDot = numberBatches / 30;
+			
+			if(trainingMode && (index % printDot == 0)) {
+                System.out.print(".");
+            }
+		}
+		
+		
 	}
 
 	private LinkedList<Future<BatchResult>> createBatchTasks(Loader loader, boolean trainingMode) {
