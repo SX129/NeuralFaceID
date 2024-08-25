@@ -7,7 +7,7 @@ import vision.neuralnetwork.loader.MetaData;
 public class TestLoader implements vision.neuralnetwork.loader.Loader {
 	private MetaData metaData;
 	
-	private int numberItems = 0;
+	private int numberItems = 9;
 	private int inputSize = 500;
 	private int expectedSize = 3;
 	private int numberBatches;
@@ -42,6 +42,7 @@ public class TestLoader implements vision.neuralnetwork.loader.Loader {
 
 	@Override
 	public void close() {
+		totalItemsRead = 0;
 	}
 
 	@Override
