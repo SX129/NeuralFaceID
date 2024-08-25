@@ -21,13 +21,12 @@ public class App {
 		
 		neuralNetwork.setThreads(5);
 		neuralNetwork.setEpochs(20);
-		neuralNetwork.setLearningRate(0.02, 0);
-		
+		neuralNetwork.setLearningRate(0.02, 0.001);
+		System.out.println(neuralNetwork);
+
 		Loader trainLoader = new TestLoader(60_000, 32);
 		Loader testLoader = new TestLoader(10_000, 32);
 		
 		neuralNetwork.fit(trainLoader, testLoader);
-		
-		System.out.println(neuralNetwork);
 	}
 }
