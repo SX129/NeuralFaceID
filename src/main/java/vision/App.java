@@ -8,6 +8,8 @@ import vision.neuralnetwork.loader.test.TestLoader;
 public class App {
 	public static void main(String[] args) {
 		String filename = "neural1.net";
+		System.out.println(Runtime.getRuntime().availableProcessors() + " processors available");
+		
 		NeuralNetwork neuralNetwork = NeuralNetwork.load(filename);
 		
 		if (neuralNetwork == null) {
@@ -25,7 +27,7 @@ public class App {
 			neuralNetwork.add(Transform.DENSE, outputRows);
 			neuralNetwork.add(Transform.SOFTMAX);
 			
-			neuralNetwork.setThreads(5);
+			neuralNetwork.setThreads(32);
 			neuralNetwork.setEpochs(100);
 			neuralNetwork.setLearningRate(0.02, 0.001);
 		}else {

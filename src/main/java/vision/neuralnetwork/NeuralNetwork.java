@@ -57,7 +57,7 @@ public class NeuralNetwork implements Serializable{
 		learningRate = initialLearningRate;
 
 		for (int epoch = 0; epoch < epochs; epoch++) {
-			System.out.printf("Epoch %3d ", epoch);
+			System.out.printf("Epoch %3d ", epoch + 1);
 			runEpoch(trainLoader, true);
 
 			if (evalLoader != null) {
