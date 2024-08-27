@@ -2,6 +2,8 @@ package vision.neuralnetwork.loader.image;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
@@ -31,6 +33,17 @@ public class ImageWriter {
 		new ImageWriter().run(directory);
 	}
 	
+	private int convertOneHotToInt(double[] labelData, int offset, int oneHotSize) {
+
+		for (int i = 0; i < oneHotSize; i++) {
+			if (Math.abs(labelData[offset + i] - 1) < 0.001) {
+				return i;
+			}
+		}
+
+		throw new RuntimeException("Invalid one hot vector.");
+	}
+	
 	public void run(String directory) {		
 		final String trainImages = String.format("%s%s%s", directory, File.separator, "train-images.idx3-ubyte");
 		final String trainLabels = String.format("%s%s%s", directory, File.separator, "train-labels.idx1-ubyte");
@@ -47,6 +60,8 @@ public class ImageWriter {
 		
 		int imageWidth = metaData.getWidth();
 		int imageHeight = metaData.getHeight();
+		
+		int labelSize = metaData.getExpectedSize();
 				
 		for(int i = 0; i < metaData.getNumberBatches(); i++) {
             BatchData batchData = testLoader.readBatch();
@@ -96,6 +111,29 @@ public class ImageWriter {
             }catch(Exception e) {
                 e.printStackTrace();
             }
+            
+			var labelData = batchData.getExpectedBatch();
+            StringBuilder sb = new StringBuilder();
+            		
+			for (int labelIndex = 0; labelIndex < numberImages; labelIndex++) {
+				if(labelIndex % horizontalImages == 0) {
+					sb.append("\n");
+				}
+				
+	            int label = convertOneHotToInt(labelData, labelIndex * labelSize, labelSize);
+	            sb.append(String.format("%d ", label));
+			}
+			
+            String labelPath = String.format("labels%d.txt", i);
+            System.out.println("Writing: " + labelPath);
+            
+            try {
+				FileWriter fw = new FileWriter(labelPath);
+				fw.write(sb.toString());
+				fw.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 		
 		loader.close();
