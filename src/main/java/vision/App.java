@@ -2,7 +2,9 @@ package vision;
 
 import java.io.File;
 
+import vision.neuralnetwork.loader.BatchData;
 import vision.neuralnetwork.loader.Loader;
+import vision.neuralnetwork.loader.MetaData;
 import vision.neuralnetwork.loader.image.ImageLoader;
 
 public class App {
@@ -25,7 +27,11 @@ public class App {
 		Loader testLoader = new ImageLoader(testImages, testLabels, 32);
 		
 		trainLoader.open();
-		testLoader.open();
+		MetaData metaData = testLoader.open();
+		
+		for(int i = 0; i < metaData.getNumberBatches(); i++) {
+            BatchData batchData = testLoader.readBatch();
+		}
 		
 		trainLoader.close();
 		testLoader.close();

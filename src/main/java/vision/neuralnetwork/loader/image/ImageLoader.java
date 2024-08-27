@@ -139,8 +139,35 @@ public class ImageLoader implements Loader{
 	}
 
 	private int readExpectedBatch(ImageBatchData batchData) {
-		// TODO Auto-generated method stub
-		return 0;
+		try {
+			var totalItemsRead = metaData.getTotalItemsRead();
+			var numberItems = metaData.getNumberItems();
+			var numberToRead = Math.min(batchSize, numberItems - totalItemsRead);
+			
+			var labelData = new byte[numberToRead];
+			var expectedSize = metaData.getExpectedSize();
+			
+			var numberRead = dsLabels.read(labelData, 0, numberToRead);
+			
+			if (numberRead != numberToRead) {
+				throw new LoaderException(
+						"Error reading expected batch. Read: " + numberRead + " Expected: " + numberToRead);
+			}
+			
+			double[] data = new double[numberToRead * expectedSize];
+			
+			for (int i = 0; i < numberToRead; i++) {
+				byte label = labelData[i];
+				
+				data[i * expectedSize + label] = 1;
+			}
+			
+			batchData.setExpectedBatch(data);
+			
+			return numberToRead;
+		}catch (IOException e) {
+            throw new LoaderException("Error reading input batch.", e);
+        }
 	}
 
 	private int readInputBatch(ImageBatchData batchData) {
