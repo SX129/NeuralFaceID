@@ -3,10 +3,11 @@ package vision.neuralnetwork.loader.image;
 import java.io.DataInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import vision.neuralnetwork.loader.BatchData;
 import vision.neuralnetwork.loader.Loader;
-import vision.neuralnetwork.loader.MetaData;
 
 public class ImageLoader implements Loader{
 	private String imageFileName;
@@ -17,6 +18,8 @@ public class ImageLoader implements Loader{
 	private DataInputStream dsLabels;
 	
 	private ImageMetaData metaData;
+	
+	private Lock readLock = new ReentrantLock();
 	
 	public ImageLoader(String imageFileName, String labelFileName, int batchSize) {
 		this.imageFileName = imageFileName;
@@ -79,9 +82,7 @@ public class ImageLoader implements Loader{
 			metaData.setHeight(height);
 			metaData.setWidth(width);
 			
-			metaData.setInputSize(width * height);
-			
-			System.out.println(height + " " + width);
+			metaData.setInputSize(width * height);			
 		} catch (IOException e) {
 			throw new LoaderException("Error reading image file: " + imageFileName, e);
 		}
@@ -117,8 +118,55 @@ public class ImageLoader implements Loader{
 
 	@Override
 	public BatchData readBatch() {
+		readLock.lock();
+		try {
+			ImageBatchData batchData = new ImageBatchData();
+			
+			int inputItemsRead = readInputBatch(batchData);
+			int expectedItemsRead = readExpectedBatch(batchData);
+			
+			if (inputItemsRead != expectedItemsRead) {
+				throw new LoaderException("Error reading batch. Input items read: " + inputItemsRead
+						+ " Expected items read: " + expectedItemsRead);
+			}
+			
+			metaData.setItemsRead(inputItemsRead);
+			
+			return batchData;
+		} finally {
+			readLock.unlock();
+		}
+	}
+
+	private int readExpectedBatch(ImageBatchData batchData) {
 		// TODO Auto-generated method stub
-		return null;
+		return 0;
+	}
+
+	private int readInputBatch(ImageBatchData batchData) {
+		try {
+			var totalItemsRead = metaData.getTotalItemsRead();
+			var numberItems = metaData.getNumberItems();
+			var numberToRead = Math.min(batchSize, numberItems - totalItemsRead);
+			
+			var inputSize = metaData.getInputSize();
+			var numberBytesToRead = numberToRead * inputSize;
+			
+			byte[] imageData = new byte[numberBytesToRead];
+			
+			var numberRead = dsImages.read(imageData, 0, numberBytesToRead);
+			
+			if (numberRead != numberBytesToRead) {
+				throw new LoaderException(
+						"Error reading input batch. Read: " + numberRead + " Expected: " + numberBytesToRead);
+			}
+			
+		}catch (IOException e) {
+            throw new LoaderException("Error reading input batch.", e);
+        }
+		
+		
+		return 0;
 	}
 	
 	
