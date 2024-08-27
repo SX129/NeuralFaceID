@@ -88,7 +88,7 @@ public class ImageWriter {
             String montagePath = String.format("montage%d.jpg", i);
             System.out.println("Writing: " + montagePath);
             
-            var montage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_BYTE_GRAY);
+            var montage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_INT_RGB);
             
             double[] pixelData = batchData.getInputBatch();
 			double[] labelData = batchData.getExpectedBatch();
@@ -123,7 +123,13 @@ public class ImageWriter {
             	
             	double pixelValue = pixelData[pixelIndex];
             	int color = (int)(0x100 * pixelValue);
-            	int pixelColor = (color << 16) + (color << 8) + color;
+            	int pixelColor = 0;
+            	
+            	if(correct[imageNumber]) {
+            		pixelColor = color;
+            	}else {
+            		pixelColor = (color << 16);
+            	}
             	
             	montage.setRGB(x, y, pixelColor);
             }
