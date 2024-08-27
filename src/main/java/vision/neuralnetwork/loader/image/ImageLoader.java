@@ -161,12 +161,20 @@ public class ImageLoader implements Loader{
 						"Error reading input batch. Read: " + numberRead + " Expected: " + numberBytesToRead);
 			}
 			
+			double[] data = new double[numberBytesToRead];
+			
+			for (int i = 0; i < numberBytesToRead; i++) {
+				data[i] = (imageData[i] & 0xFF) / 256.0;
+				
+				System.out.println(data[i]);
+			}
+			
+			batchData.setInputBatch(data);
+			
+			return numberToRead;
 		}catch (IOException e) {
             throw new LoaderException("Error reading input batch.", e);
         }
-		
-		
-		return 0;
 	}
 	
 	
