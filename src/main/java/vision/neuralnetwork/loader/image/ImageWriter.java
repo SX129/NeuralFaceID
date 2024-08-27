@@ -34,14 +34,17 @@ public class ImageWriter {
 	}
 	
 	private int convertOneHotToInt(double[] labelData, int offset, int oneHotSize) {
-
+		double maxValue = 0;
+		int maxIndex = 0;
+		
 		for (int i = 0; i < oneHotSize; i++) {
-			if (Math.abs(labelData[offset + i] - 1) < 0.001) {
-				return i;
+			if (labelData[offset + i] > maxValue) {
+				maxValue = labelData[offset + i];
+				maxIndex = i;
 			}
 		}
-
-		throw new RuntimeException("Invalid one hot vector.");
+		
+		return maxIndex;
 	}
 	
 	public void run(String directory) {		
