@@ -19,6 +19,10 @@ public class Engine implements Serializable{
 	
 	public void setScaleInitialWeights(double scale) {
 		this.scaleInitialWeights = scale;
+		
+		if (weights.size() != 0) {
+			throw new RuntimeException("Scale initial weights must be set before adding any layers!");
+		}
 	}
 	
 	public void evaluate(BatchResult batchResult, Matrix expected) {

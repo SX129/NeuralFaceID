@@ -41,15 +41,18 @@ public class App {
 			System.out.println("Unable to load neural network from saved file. Creating new network.");
 
 			neuralNetwork = new NeuralNetwork();
-
+			
+			neuralNetwork.setScaleInitialWeights(0.2);
+			neuralNetwork.setThreads(32);
+			neuralNetwork.setEpochs(100);
+			neuralNetwork.setLearningRate(0.02, 0.001);
+			
 			neuralNetwork.add(Transform.DENSE, 200, inputSize);
 			neuralNetwork.add(Transform.RELU);
 			neuralNetwork.add(Transform.DENSE, outputSize);
 			neuralNetwork.add(Transform.SOFTMAX);
 
-			neuralNetwork.setThreads(32);
-			neuralNetwork.setEpochs(100);
-			neuralNetwork.setLearningRate(0.02, 0.001);
+			
 		} else {
 			System.out.println("Neural network loaded from saved file: " + filename + "\n");
 		}
