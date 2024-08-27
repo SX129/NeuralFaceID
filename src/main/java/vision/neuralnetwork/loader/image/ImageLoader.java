@@ -2,6 +2,7 @@ package vision.neuralnetwork.loader.image;
 
 import java.io.DataInputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 
 import vision.neuralnetwork.loader.BatchData;
 import vision.neuralnetwork.loader.Loader;
@@ -32,7 +33,47 @@ public class ImageLoader implements Loader{
 		try {
 			dsLabels = new DataInputStream(new FileInputStream(labelFileName));
 		} catch (Exception e) {
-			throw new LoaderException("Error opening label image file: " + labelFileName, e);
+			throw new LoaderException("Error opening label file: " + labelFileName, e);
+		}
+		
+		readMetaData();
+		
+		return null;
+	}
+	
+	private MetaData readMetaData() {
+		
+		int numberItems = 0;
+		
+		try {
+			int magicLabelNumber = dsLabels.readInt();
+			
+			if(magicLabelNumber != 2049) {
+				throw new LoaderException("Label file: " + labelFileName + " has wrong format.");
+			}
+			
+			numberItems = dsLabels.readInt();
+		} catch (IOException e) {
+			throw new LoaderException("Error reading label file: " + labelFileName, e);
+		}
+		
+		try {
+			int magicImageNumber = dsImages.readInt();
+			
+			if(magicImageNumber != 2051) {
+				throw new LoaderException("Image file: " + imageFileName + " has wrong format.");
+			}
+			
+			if (dsImages.readInt() != numberItems) {
+				throw new LoaderException("Image file: " + imageFileName + " has different number of items than label file: " + labelFileName);
+			}
+			
+			int height = dsImages.readInt();
+			int width = dsImages.readInt();
+			
+			System.out.println(height + " " + width);
+		} catch (IOException e) {
+			throw new LoaderException("Error reading image file: " + imageFileName, e);
 		}
 		
 		return null;
@@ -49,7 +90,7 @@ public class ImageLoader implements Loader{
 		try {
 			dsLabels.close();
 		} catch (Exception e) {
-			throw new LoaderException("Error closing label image file: " + labelFileName, e);
+			throw new LoaderException("Error closing label file: " + labelFileName, e);
 		}
 	}
 
