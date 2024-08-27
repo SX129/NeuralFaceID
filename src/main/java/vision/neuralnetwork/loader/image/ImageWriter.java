@@ -44,15 +44,53 @@ public class ImageWriter {
 		
 		ImageLoader loader = testLoader;
 		ImageMetaData metaData = loader.open();
+		
+		int imageWidth = metaData.getWidth();
+		int imageHeight = metaData.getHeight();
 				
 		for(int i = 0; i < metaData.getNumberBatches(); i++) {
             BatchData batchData = testLoader.readBatch();
-            String montagePath = String.format("montage%d.jpg", i);
             
+            var numberImages = metaData.getItemsRead();
+            
+            int horizontalImages = (int)Math.sqrt(numberImages);
+            
+            while(numberImages % horizontalImages != 0) {
+            	horizontalImages++;
+            }
+            
+            int verticalImages = numberImages / horizontalImages;
+            int canvasWidth = horizontalImages * imageWidth;
+            int canvasHeight = verticalImages * imageHeight;
+            
+            String montagePath = String.format("montage%d.jpg", i);
             System.out.println("Writing: " + montagePath);
             
-            var montage = new BufferedImage(900, 900, BufferedImage.TYPE_BYTE_GRAY);
+            var montage = new BufferedImage(canvasWidth, canvasHeight, BufferedImage.TYPE_BYTE_GRAY);
             
+            double[] pixelData = batchData.getInputBatch();
+            int imageSize = imageWidth * imageHeight;
+            
+            for(int pixelIndex = 0; pixelIndex < pixelData.length; pixelIndex++) {
+            	int imageNumber = pixelIndex / imageSize;
+            	int pixelNumber = pixelIndex % imageSize;
+            	
+            	int montageRow = imageNumber / horizontalImages;
+            	int montageCol = imageNumber % horizontalImages;
+            	
+            	int pixelRow = pixelNumber / imageWidth;
+            	int pixelCol = pixelNumber % imageWidth;
+            	
+            	int x = montageCol * imageWidth + pixelCol;
+            	int y = montageRow * imageHeight + pixelRow;
+            	
+            	double pixelValue = pixelData[pixelIndex];
+            	int color = (int)(0x100 * pixelValue);
+            	int pixelColor = (color << 16) + (color << 8) + color;
+            	
+            	montage.setRGB(x, y, pixelColor);
+            }
+            		
             try {
                 ImageIO.write(montage, "jpg", new File(montagePath));
             }catch(Exception e) {
