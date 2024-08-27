@@ -16,6 +16,8 @@ public class ImageLoader implements Loader{
 	private DataInputStream dsImages;
 	private DataInputStream dsLabels;
 	
+	private ImageMetaData metaData;
+	
 	public ImageLoader(String imageFileName, String labelFileName, int batchSize) {
 		this.imageFileName = imageFileName;
 		this.labelFileName = labelFileName;
@@ -23,7 +25,7 @@ public class ImageLoader implements Loader{
 	}
 
 	@Override
-	public MetaData open() {
+	public ImageMetaData open() {
 		try {
 			dsImages = new DataInputStream(new FileInputStream(imageFileName));
 		} catch (Exception e) {
@@ -36,13 +38,14 @@ public class ImageLoader implements Loader{
 			throw new LoaderException("Error opening label file: " + labelFileName, e);
 		}
 		
-		readMetaData();
+		metaData = readMetaData();
 		
-		return null;
+		return metaData;
 	}
 	
-	private MetaData readMetaData() {
+	private ImageMetaData readMetaData() {
 		
+		metaData = new ImageMetaData();
 		int numberItems = 0;
 		
 		try {
@@ -53,6 +56,8 @@ public class ImageLoader implements Loader{
 			}
 			
 			numberItems = dsLabels.readInt();
+			metaData.setNumberItems(numberItems);
+			
 		} catch (IOException e) {
 			throw new LoaderException("Error reading label file: " + labelFileName, e);
 		}
@@ -71,16 +76,27 @@ public class ImageLoader implements Loader{
 			int height = dsImages.readInt();
 			int width = dsImages.readInt();
 			
+			metaData.setHeight(height);
+			metaData.setWidth(width);
+			
+			metaData.setInputSize(width * height);
+			
 			System.out.println(height + " " + width);
 		} catch (IOException e) {
 			throw new LoaderException("Error reading image file: " + imageFileName, e);
 		}
 		
-		return null;
+		metaData.setExpectedSize(10);
+		metaData.setNumberBatches((int)Math.ceil((double)numberItems) / batchSize);
+		
+		return metaData;
 	}
 
 	@Override
 	public void close() {
+		
+		metaData = null;
+		
 		try {
 			dsImages.close();
 		} catch (Exception e) {
@@ -95,9 +111,8 @@ public class ImageLoader implements Loader{
 	}
 
 	@Override
-	public MetaData getMetaData() {
-		// TODO Auto-generated method stub
-		return null;
+	public ImageMetaData getMetaData() {
+		return metaData;
 	}
 
 	@Override
