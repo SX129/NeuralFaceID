@@ -15,7 +15,7 @@ public class ImageWriter {
 
 	public static void main(String[] args) {	
 		if(args.length == 0) {
-			System.out.println("Usage: [app] <MNIST DATA DIRECTORY>");
+			System.out.println("Usage: [app] <UNKNOWN DATA DIRECTORY>");
 			return;
 		}
 		
@@ -63,7 +63,7 @@ public class ImageWriter {
 		ImageLoader loader = testLoader;
 		ImageMetaData metaData = loader.open();
 		
-		var neuralNetwork = NeuralNetwork.load("mnistNeural0.net");
+		var neuralNetwork = NeuralNetwork.load("neural.net");
 		
 		int imageWidth = metaData.getWidth();
 		int imageHeight = metaData.getHeight();

@@ -11,10 +11,10 @@ import vision.neuralnetwork.loader.image.ImageLoader;
 public class App {
 
 	public static void main(String[] args) {
-		final String filename = "mnistNeural0.net";
+		final String filename = "neural.net";
 
 		if (args.length == 0 || !new File(args[0]).isDirectory()) {
-			System.out.println("Usage: [app] <MNIST DATA DIRECTORY>");
+			System.out.println("Usage: [app] <UNKNOWN DATA DIRECTORY>");
 			return;
 		}
 
