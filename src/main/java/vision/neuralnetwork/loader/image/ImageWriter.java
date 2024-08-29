@@ -52,8 +52,8 @@ public class ImageWriter {
 	public void run(String directory) {		
 		final String trainImages = String.format("%s%s%s", directory, File.separator, "train-images.idx3-ubyte");
 		final String trainLabels = String.format("%s%s%s", directory, File.separator, "train-labels.idx1-ubyte");
-		final String testImages = String.format("%s%s%s", directory, File.separator, "t10k-images.idx3-ubyte");
-		final String testLabels = String.format("%s%s%s", directory, File.separator, "t10k-labels.idx1-ubyte");
+		final String testImages = String.format("%s%s%s", directory, File.separator, "test-images.idx3-ubyte");
+		final String testLabels = String.format("%s%s%s", directory, File.separator, "test-labels.idx1-ubyte");
 		
 		int batchSize = 900;
 		
