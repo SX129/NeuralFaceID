@@ -9,9 +9,9 @@
 	<artifactId>vision</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 
-	<name>vision</name>
+	<name>NeuralFaceID</name>
 	<!-- FIXME change it to the project's website -->
-	<url>http://www.example.com</url>
+	<url></url>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
